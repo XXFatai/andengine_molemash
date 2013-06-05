@@ -1,6 +1,8 @@
 package com.trf.molemash;
 
 import org.andengine.engine.camera.Camera;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
@@ -20,6 +22,10 @@ public class main extends SimpleBaseGameActivity{
 	private BitmapTextureAtlas mBitmapTextureAtlas;
 	private ITextureRegion mBackgroundTextureRegion;
 	private TiledTextureRegion mMoleTextureRegine;
+	
+	private Sprite moleSprite;
+	private float moleTop;
+	private float moleLeft;
 	
 	private Scene scene;
 	private Camera camera;
@@ -43,13 +49,31 @@ public class main extends SimpleBaseGameActivity{
 	@Override
 	protected Scene onCreateScene() {
 		// TODO Auto-generated method stub
+		
 		this.scene = new Scene();
 		scene.setBackgroundEnabled(false);
+		
 		Sprite backgroundSprite = new Sprite(0, 0, mBackgroundTextureRegion, this.getVertexBufferObjectManager());
-		Sprite moleSprite = new Sprite(CAMERA_WIDTH / 2, CAMERA_HEIGHT / 2, mMoleTextureRegine, this.getVertexBufferObjectManager());
+		moleSprite = new Sprite(moleLeft, moleTop, mMoleTextureRegine, this.getVertexBufferObjectManager());
+		
 		scene.attachChild(backgroundSprite);
 		scene.attachChild(moleSprite);
+		
+		scene.registerUpdateHandler(new TimerHandler(0.5F, true, new ITimerCallback() {
+			
+			@Override
+			public void onTimePassed(TimerHandler arg0) {
+				// TODO Auto-generated method stub
+				moveMole();
+			}
+		}));
 		return scene;
+	}
+	
+	private void moveMole(){
+		moleLeft = (float)Math.random() * (CAMERA_WIDTH - moleSprite.getWidth());
+		moleTop = (float)Math.random() * (CAMERA_HEIGHT - moleSprite.getHeight());
+		moleSprite.setPosition(moleLeft, moleTop);
 	}
 
 }
